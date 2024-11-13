@@ -11,8 +11,8 @@ class product extends Model
     use HasFactory;
 
 
-    public function trademark()
+    public function brand()
     {
-        return $this->belongsTo(trademark::class);
+        return $this->belongsTo(brand::class);
     }
 }

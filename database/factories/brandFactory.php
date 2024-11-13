@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\trademark>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\brand>
  */
-class TrademarkFactory extends Factory
+class brandFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class TrademarkFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name(),
         ];
     }
 }

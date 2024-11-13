@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class trademark extends Model
+class brand extends Model
 {
-    /** @use HasFactory<\Database\Factories\TrademarkFactory> */
+    /** @use HasFactory<\Database\Factories\brandFactory> */
     use HasFactory;
 
 
