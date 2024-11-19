@@ -25,10 +25,8 @@
 
             <div class="space-x-6 font-bold">
                 <a class="text-lg" href="/customer/show">Customers</a>
-                <a class="text-lg" href="/product/add">Product</a>
-{{--                <a class="text-lg" href="/product/show">Product</a>--}}
-                <a class="text-lg" href="/orders">Orders</a>
-
+                <a class="text-lg" href="/product/show">Product</a>
+                <a class="text-lg" href="/order/show">Orders</a>
             </div>
 
             <div>

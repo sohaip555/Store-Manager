@@ -1,3 +1,3 @@
-<x-layouts.customer>
+<x-layouts.app>
     <livewire:show-customers/>
-</x-layouts.customer>
+</x-layouts.app>

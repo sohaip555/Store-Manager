@@ -1,7 +1,6 @@
 <div>
-    <form wire:submit="save">
+    <form >
         @csrf
-
         <div class="flex justify-between">
             <div class="grid grid-rows-4-4">
                 <div class="mb-3">
@@ -25,18 +24,22 @@
                     <input
                         type="text"
                         class="p-2 w-full border rounded-md ⬛ bg-gray-700 ⬛ text-white"
-                        {{--                wire:model="form."--}}
+                        wire:model="form.item_code"
                     />
                 </div>
 
                 <div class="mb-3">
                     <label for="mySelect" class="block mb-2 text-white">Select a brand:</label> <!-- Added a label for accessibility -->
-                    <select id="mySelect" class="p-2 w-full border rounded-md bg-gray-700 text-white" wire:model="form.brand">
-                        @foreach($form->brands as $brand)
-                            <option value="{{$brand}}">{{$brand->name}}</option>
+                    <select id="mySelect" class="p-2 w-full border rounded-md bg-gray-700 text-white" wire:model="form.brand_id">
+                    @if(isset($form->product))
+                        <option value="{{$form->product->brand->id}}" >{{$form->product->brand->name}}</option>
+                    @endif
+                        @foreach($brands as $brand)
+                            <option value="{{$brand->id}}" >{{$brand->name}}</option>
                         @endforeach
                     </select>
                 </div>
+
 
                 <div class="mb-3">
                     <h1 class="block">Price</h1>

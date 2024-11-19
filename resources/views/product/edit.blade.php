@@ -1,4 +1,4 @@
 <x-layouts.app>
-    <livewire:show-product/>
+    <livewire:edit-product :$product/>
 </x-layouts.app>
 

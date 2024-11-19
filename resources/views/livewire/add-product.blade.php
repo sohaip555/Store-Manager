@@ -7,7 +7,7 @@
 <div class="m-auto w-1/2 mb-4">
     <h3 class="text-lg text-white mb-3">Add product</h3>
 
-    <x-forms.product :$form/>
+    <x-forms.product :brands="$form->brands" :$form/>
 
 
     <div class="mb-3 flex items-center">

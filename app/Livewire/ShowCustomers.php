@@ -11,19 +11,20 @@ class ShowCustomers extends Component
 
     public $customers;
 
-    public function mount()
+//    public function mount()
+//    {
+//        $this->customers = customer::all();
+//    }
+
+
+    public function delete(customer $customer)
     {
-        $this->customers = Customer::all();
-    }
-
-
-    public function delete()
-    {
-
+        $customer->delete();
     }
 
     public function render()
     {
+        $this->customers = customer::all();
         return view('livewire.show-customers', [ 'customers' => $this->customers ]);
     }
 }

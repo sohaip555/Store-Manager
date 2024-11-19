@@ -19,12 +19,11 @@ class AddProduct extends Component
     {
         $this->form->store();
 
-        $this->redirect('/');
+        $this->redirect('/product/show');
     }
 
     public function render()
     {
-//        dd($this->form);
         return view('livewire.add-product');
     }
 }
