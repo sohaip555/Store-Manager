@@ -17,6 +17,8 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(customer::class)->constrained();
+            $table->integer('quantity');
+            $table->integer('total_price');
             $table->timestamps();
         });
     }

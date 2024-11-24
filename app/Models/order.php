@@ -17,6 +17,11 @@ class order extends Model
 
     public function items()
     {
+        return $this->hasMany(order_item::class);
+    }
+
+    public function products()
+    {
         return $this->hasManyThrough(product::class,order_item::class);
     }
 }

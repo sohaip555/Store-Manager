@@ -19,6 +19,8 @@ class OrderFactory extends Factory
     {
         return [
             'customer_id' => customer::factory(),
+            'total_price' => $this->faker->randomFloat(2,0,1000),
+            'quantity' => $this->faker->numberBetween(1,10),
         ];
     }
 }

@@ -8,7 +8,7 @@
 
     <div class="ml-2 mb-3 flex items-center justify-between">
         <a href="/product/add" class="text-xl text-indigo-500 p-2 hover:text-blue-400 -indigo-900 rounded-sm" wire:navigate>
-            create Product
+            Create Product
         </a>
     </div>
 

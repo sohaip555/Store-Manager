@@ -31,9 +31,9 @@
                 <div class="mb-3">
                     <label for="mySelect" class="block mb-2 text-white">Select a brand:</label> <!-- Added a label for accessibility -->
                     <select id="mySelect" class="p-2 w-full border rounded-md bg-gray-700 text-white" wire:model="form.brand_id">
-                    @if(isset($form->product))
-                        <option value="{{$form->product->brand->id}}" >{{$form->product->brand->name}}</option>
-                    @endif
+                        @if(isset($form->product))
+                            <option value="{{$form->product->brand->id}}" >{{$form->product->brand->name}}</option>
+                        @endif
                         @foreach($brands as $brand)
                             <option value="{{$brand->id}}" >{{$brand->name}}</option>
                         @endforeach
