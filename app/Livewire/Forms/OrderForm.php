@@ -12,99 +12,52 @@ use Livewire\Form;
 
 class OrderForm extends Form
 {
+    public array $items = [];
+//    public order_item $items;
+
+
+//    select option
+    public $customers = [];
+    public $products = [];
 
 
 
-    public order $order;
+//    For modification or edit
+//    public ?product $product;
+//
+//    public ?customer $customer;
 
-    #[Validate('required')]
+
+
+
     public $customer_id;
-    #[Validate('required')]
     public $quantityOfOrder = 0;
-    #[Validate('required')]
     public $total_price_order;
 
 
 
-
-
-    public array $items = [];
-
-    public order_item $order_item;
-
-
-
-//  For modification or edit
-    public ?product $product;
-
-    public ?customer $customer;
-//    select option
-    public $customers = [];
-
-    public $products = [];
-//  for order_items story
-
-
-
-
-    #[Validate('required')]
     public $order_id;
-    #[Validate('required')]
-    public $quantity = 1;
-    #[Validate('required')]
-    public $product_id;
-    #[Validate('required')]
+    public $quantityOfItem = 1;
+    public $product_id = null;
     public $total_price_item;
 
 
-
-
-
-
-
-
-    public function calculatePriceAndQuantity()
+    public function calculatePrice()
     {
 
-//        dd($this->items);
-
         foreach ($this->items as $item) {
-            foreach ($item as $key => $value) {
-                $name = $key;
 
+            if (!isset($item["quantity"]))
+            {
+                dd('you missed the quantity of product');
             }
 
-//            if (isset($item["product_id"]))
-//                dd($item);
+            if (!isset($item["product_id"]))
+            {
+                dd('you forget to chose the product ');
+            }
 
-
-
-                $this->total_price_order += $item["quantity"] * $this->products->where('id', $item["product_id"])->first()->price;
-            $this->quantityOfOrder++;
-
-        }
-
-//        dd($this->quantityOfOrder);
-
-    }
-
-
-
-    public function setOrderItem()
-    {
-        foreach ($this->items as $item) {
-
-//            $this->product_id = $item['product_id'];
-//            $this->quantity = $this->item['quantity'];
-//            $this->total_price_item = $this->quantity * $this->products->where('product_id', $this->product_id)->first()->price;
-//
-//            $this->validate([
-//                'product_id' => 'required',
-//                'total_price_item' => 'required',
-//                'order_id' => 'required',
-//            ]);
-
-            order_item::create($this->only(['product_id', 'quantity', 'total_price_item', 'order_id']));
+            $this->total_price_order += $item["quantity"] * $this->products->where('id', $item["product_id"])->first()->price;
 
         }
 
@@ -113,12 +66,8 @@ class OrderForm extends Form
 
     public function storeOrder()
     {
-        $this->calculatePriceAndQuantity();
-
-        $this->order->customer_id  = $this->customer_id;
-        $this->order->quantity = $this->quantityOfOrder;
-        $this->order->total_price_order = $this->total_price_order;
-
+        $this->calculatePrice();
+        $this->quantityOfOrder = collect($this->items)->count();
 
     }
 
@@ -126,8 +75,13 @@ class OrderForm extends Form
     public function createOrder()
     {
 
-        $this->storeOrder();
+        if (!isset($this->customer_id))
+        {
+            dd('you need to select a customer');
+        }
 
+
+        $this->storeOrder();
 
         $this->validate([
             'customer_id' => 'required',
@@ -137,13 +91,49 @@ class OrderForm extends Form
         ]);
 
 
-        $this->order = order::create([
+        $this->order_id = order::create([
             'customer_id' => $this->customer_id,
             'quantity' => $this->quantityOfOrder,
             'total_price' => $this->total_price_order,
-        ]);
+        ])->id;
 
-        dd($this->order);
+    }
+
+    public function setOrderItem($item)
+    {
+
+        $this->product_id = $item['product_id'];
+        $this->quantityOfItem = $item['quantity'];
+        $this->total_price_item = $this->quantityOfItem * $this->products->where('id', $item['product_id'])->first()->price;
+
+
+    }
+
+
+    public function createOrderItem()
+    {
+
+        foreach ($this->items as $item) {
+
+            $this->setOrderItem($item);
+
+
+            $this->validate([
+                'product_id' => 'required',
+                'quantityOfItem' => 'required',
+                'total_price_item' => 'required',
+                'order_id' => 'required',
+            ]);
+
+            order_item::create([
+                'order_id' => $this->order_id,
+                'product_id' => $this->product_id,
+                'total_price' => $this->total_price_item,
+                'quantity' => $this->quantityOfItem,
+            ]);
+
+        }
+
 
     }
 
@@ -152,15 +142,79 @@ class OrderForm extends Form
     public function store()
     {
 
-//        dd($this->only(["customer_id", "quantityOfOrder", 'total_price_order']));
-
         $this->createOrder();
 
-        $this->setOrderItem();
+        $this->createOrderItem();
 
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function setOrder(order $order)
+    {
+        $counter = 0;
+
+
+        $this->customer_id = $order->customer_id;
+        $items = $order->items;
+        foreach ($items as $item) {
+
+            $this->items[$counter]['quantity'] = $item['quantity'];
+            $this->items[$counter]['product_id'] = $item['product_id'];
+            $this->total_price_order += $item["quantity"] * $this->products->where('id', $item["product_id"])->first()->price;
+
+
+
+            $counter++;
+        }
+
+        $this->order_id = $order->id;
+
+    }
+
+
+    public function update()
+    {
+
+    }
 
 
 }

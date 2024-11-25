@@ -7,6 +7,7 @@ use App\Models\customer;
 use App\Models\order;
 use App\Models\order_item;
 use App\Models\product;
+use Illuminate\Support\Arr;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -20,13 +21,15 @@ class CreateOrder extends Component
 
         $this->form->customers = customer::all();
         $this->form->products = product::all();
-        $this->form->order = new order();
+//        $this->form->order = new order();
 
 
 
 
 //        set defaults value for -->>( form.customer_id )<<---
         $this->form->customer_id = $this->form->customers[0]->id;
+
+
 
     }
     public function save()
@@ -41,6 +44,12 @@ class CreateOrder extends Component
     {
         $this->form->items[] = [];
 
+    }
+
+
+    public function delete($index)
+    {
+        Arr::forget($this->form->items, $index);
 
     }
 

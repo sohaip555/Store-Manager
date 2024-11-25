@@ -21,6 +21,7 @@ class ProductForm extends Form
     public $price;
     #[Validate('required')]
     public $quantity;
+
     public $url = '';
     public $status = '';
     public $description = '';
