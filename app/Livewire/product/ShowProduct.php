@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\product;
 
 use App\Livewire\Forms\ProductForm;
 use App\Models\product;
@@ -29,7 +29,7 @@ class ShowProduct extends Component
 
     public function render()
     {
-        $this->products =  Product::all();
-        return view('livewire.show-product');
+        $this->products =  Product::with('brand')->get();
+        return view('livewire.product.show-product');
     }
 }

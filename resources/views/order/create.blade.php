@@ -1,3 +1,3 @@
 <x-layouts.app>
-    <livewire:create-order/>
+    <livewire:order.create-order/>
 </x-layouts.app>

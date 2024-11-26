@@ -1,32 +1,29 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\product;
 
 use App\Livewire\Forms\ProductForm;
-use App\Models\product;
 use Livewire\Component;
 
-class EditProduct extends Component
+class AddProduct extends Component
 {
 
     public ProductForm $form;
 
-    public function mount(product $product)
+    public function mount()
     {
-//        dd($product->item_code);
         $this->form->brands =  \App\Models\brand::all();
-        $this->form->setProduct($product);
     }
 
     public function save()
     {
-        $this->form->updata();
+        $this->form->store();
 
         $this->redirect('/product/show');
     }
 
     public function render()
     {
-        return view('livewire.edit-product');
+        return view('livewire.product.add-product');
     }
 }

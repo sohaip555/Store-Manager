@@ -5,13 +5,14 @@ namespace App\Livewire\Forms;
 
 use App\Models\order;
 use App\Models\order_item;
+use App\Models\product;
 use Illuminate\Support\Collection;
 use Livewire\Form;
 
 class OrderForm extends Form
 {
     public Collection $items;
-    public $order_id;
+    public order $order;
 
     public function __construct()
     {
@@ -21,8 +22,8 @@ class OrderForm extends Form
 
 //  for the order property
     public $customer_id;
-    public $quantityOfOrder;
-    public $total_price_order;
+    public $quantity;
+    public $total_price;
 
 
 //    select option
@@ -39,31 +40,37 @@ class OrderForm extends Form
             dd('you need to select a customer');
         }
 
-        $this->order_id = order::create([
+        $this->order = order::create([
             'customer_id' => $this->customer_id,
-            'quantity' => $this->quantityOfOrder,
-            'total_price' => $this->total_price_order,
-        ])->id;
+            'quantity' => $this->quantity,
+            'total_price' => $this->total_price,
+        ]);
 
     }
 
 
 
-    public function createOrderItem()
+    public function createOrderItem($item)
     {
-        foreach ($this->items as $item) {
-
-            $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
-
-
-            order_item::create([
-                'order_id' => $this->order_id,  //  the order_id is from $this not from $item
-                'product_id' => $item->product_id,
-                'total_price' => $item->total_price,
-                'quantity' => $item->quantity,
-            ]);
-
+        // Added validation to ensure data integrity
+        if (!isset($item['product_id']) || !isset($item['quantity']) || $item['quantity'] <= 0) {
+            throw new \Exception("Invalid item data: missing product ID or quantity, or quantity is not positive.");
         }
+
+        $product = Product::find($item['product_id']);
+        if (!$product) {
+            throw new \Exception("Product not found: " . $item['product_id']);
+        }
+
+        $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
+
+        order_item::create([
+            'order_id' => $this->order->id,  //  the order_id is from $this not from $item
+            'product_id' => $item->product_id,
+            'total_price' => $item->total_price,
+            'quantity' => $item->quantity,
+        ]);
+
     }
 
 
@@ -72,7 +79,10 @@ class OrderForm extends Form
 
         $this->createOrder();
 
-        $this->createOrderItem();
+        foreach ($this->items as $item) {
+
+            $this->createOrderItem($item);
+        }
 
 
     }
@@ -87,60 +97,150 @@ class OrderForm extends Form
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function setOrder(order $order)
+    public function updateOrder()
     {
-        $counter = 0;
-
-
-        $this->customer_id = $order->customer_id;
-        $items = $order->items;
-        foreach ($items as $item) {
-
-            $this->items[$counter]['quantity'] = $item['quantity'];
-            $this->items[$counter]['product_id'] = $item['product_id'];
-            $this->total_price_order += $item["quantity"] * $this->products->where('id', $item["product_id"])->first()->price;
-
-
-
-            $counter++;
+        if (!isset($this->customer_id))
+        {
+            dd('you need to select a customer');
         }
 
-        $this->order_id = $order->id;
+
+        $this->order->update([
+            'customer_id' => $this->customer_id,
+            'quantity' => $this->quantity,
+            'total_price' => $this->total_price,
+        ]);
+
+    }
+
+    public function updateOrderItem($item)
+    {
+
+        // Added validation to ensure data integrity
+        if (!isset($item['product_id']) || !isset($item['quantity']) || $item['quantity'] <= 0) {
+            throw new \Exception("Invalid item data: missing product ID or quantity, or quantity is not positive.");
+        }
+
+        $product = Product::find($item['product_id']);
+        if (!$product) {
+            throw new \Exception("Product not found: " . $item['product_id']);
+        }
+
+        $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
+
+
+        $item->update([
+            'order_id' => $this->order->id,  //  the order_id is from $this not from $item
+            'product_id' => $item->product_id,
+            'total_price' => $item->total_price,
+            'quantity' => $item->quantity,
+        ]);
 
     }
 
 
     public function update()
     {
+
+        $this->updateOrder();
+//        dd($this);
+
+        foreach ($this->items as $item) {
+//            dd($item);
+
+
+            if ($item->id != null)
+            {
+                $this->updateOrderItem($item);
+            }else
+            {
+                $this->createOrderItem($item);
+            }
+
+        }
+
+
+    }
+
+
+
+
+    public function setOrder(order $order)
+    {
+        $items = [];
+
+        $this->customer_id = $order->customer_id;
+        $this->quantity = $order->quantity;
+        $this->total_price = $order->total_price;
+        $this->order = $order;
+
+        foreach ($order->items as $item) {
+
+            $items[] = [
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+            ];
+
+            $this->items->push($item);
+        }
+
+
+        return $items;
+
+    }
+
+
+
+    public function setForCreate(array $items)
+    {
+
+        foreach ($items as $item) {
+
+            if (!isset($item["quantity"]))
+            {
+                dd('you missed the quantity of product');
+            }
+
+            if (!isset($item["product_id"]))
+            {
+                dd('you forget to chose the product ');
+            }
+
+            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
+
+
+            $this->items->push(new order_item($item));
+        }
+
+
+        $this->quantity = $this->items->count();
+
+
+    }
+
+
+    public function setForUpdate(array $items)
+    {
+
+        foreach ($items as $item) {
+
+            if (!isset($item["quantity"]))
+            {
+                dd('you missed the quantity of product');
+            }
+
+            if (!isset($item["product_id"]))
+            {
+                dd('you forget to chose the product ');
+            }
+
+            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
+
+        }
+
+
+        $this->quantity = $this->items->count();
+
 
     }
 

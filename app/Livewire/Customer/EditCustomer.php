@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Customer;
 
 use App\Livewire\Forms\CustomerForm;
 use App\Models\customer;
@@ -27,6 +27,6 @@ class EditCustomer extends Component
 
     public function render()
     {
-        return view('livewire.edit-customer');
+        return view('livewire.customer.edit-customer');
     }
 }

@@ -12,9 +12,10 @@
 
     <div class="w-full">
 
-        <x-forms.order.item :$form/>
+        <x-forms.order.item :$items :$form/>
 
-        <x-forms.order.add-create />
+        <x-forms.order.add/>
+        <x-forms.order.update />
 
     </div>
 

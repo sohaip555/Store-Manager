@@ -1,3 +1,3 @@
 <x-layouts.app>
-    <livewire:create-customer/>
+    <livewire:customer.create-customer/>
 </x-layouts.app>

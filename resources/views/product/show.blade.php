@@ -1,4 +1,4 @@
 <x-layouts.app>
-    <livewire:show-product/>
+    <livewire:product.show-product/>
 </x-layouts.app>
 

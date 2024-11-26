@@ -1,3 +1,3 @@
 <x-layouts.app>
-    <livewire:edit-customer :$customer />
+    <livewire:customer.edit-customer :$customer />
 </x-layouts.app>

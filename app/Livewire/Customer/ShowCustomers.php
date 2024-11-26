@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Customer;
 
 use App\Models\customer;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class ShowCustomers extends Component
@@ -25,6 +24,6 @@ class ShowCustomers extends Component
     public function render()
     {
         $this->customers = customer::all();
-        return view('livewire.show-customers', [ 'customers' => $this->customers ]);
+        return view('livewire.customer.show-customers', [ 'customers' => $this->customers ]);
     }
 }

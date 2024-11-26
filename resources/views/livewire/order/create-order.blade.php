@@ -14,7 +14,9 @@
 
         <x-forms.order.item :$form :$items/>
 
-        <x-forms.order.add-create />
+        
+        <x-forms.order.add />
+        <x-forms.order.create />
 
     </div>
 
