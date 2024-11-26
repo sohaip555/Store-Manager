@@ -18,6 +18,16 @@ class CreateOrder extends Component
     public array $items = [];
 
 
+    public function rules(): array
+    {
+        return [
+            'form.customer_id' => ['required'], // Check if customer ID exists
+            'form.quantityOfOrder' => ['required'], // Must be a positive integer
+            'form.total_price_order' => ['required'], // Must be a non-negative number
+//            'form.items.*.product_id' => ['required'], // For each item, product_id must exist
+//            'form.items.*.quantity' => ['required'],    // Each item must have a quantity
+        ];
+    }
 
     public function mount()
     {
@@ -32,6 +42,27 @@ class CreateOrder extends Component
 
     }
 
+
+    public function addItem()
+    {
+        $this->items[] = [
+            'quantity' => 1,
+            'product_id' => 1,
+        ];
+
+
+//        dd('sdcsdc');
+
+    }
+
+
+    public function delete($index)
+    {
+        Arr::forget($this->items, $index);
+//        dd($this->items);
+
+
+    }
 
 
     public function save()
@@ -54,6 +85,7 @@ class CreateOrder extends Component
             $this->form->items->push(new order_item($item));
         }
 
+
         $this->form->quantityOfOrder = $this->form->items->count();
 
         $this->validate();
@@ -61,28 +93,6 @@ class CreateOrder extends Component
 
         $this->redirect('/order/show');
     }
-
-
-
-    public function addItem()
-    {
-        $this->items[] = [
-            'quantity' => 1,
-            'product_id' => 1,
-        ];
-
-
-        dd('sdcsdc');
-
-    }
-
-
-    public function delete($index)
-    {
-        Arr::forget($this->form->items, $index);
-
-    }
-
 
 
     public function render()

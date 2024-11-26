@@ -2,19 +2,14 @@
 
 namespace App\Livewire\Forms;
 
-use App\Livewire\CreateOrder;
-use App\Models\customer;
+
 use App\Models\order;
 use App\Models\order_item;
-use App\Models\product;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class OrderForm extends Form
 {
-//    public array $items = [];
-//    #[Validate('required')]
     public Collection $items;
     public $order_id;
 
@@ -25,20 +20,14 @@ class OrderForm extends Form
 
 
 //  for the order property
-    #[Validate('required')]
     public $customer_id;
-    #[Validate('required')]
     public $quantityOfOrder;
-    #[Validate('required')]
     public $total_price_order;
-
 
 
 //    select option
     public $customers = [];
     public $products = [];
-
-
 
 
 
@@ -50,11 +39,6 @@ class OrderForm extends Form
             dd('you need to select a customer');
         }
 
-/*        dd($this->customer_id,$this->quantityOfOrder, $this->total_price_order);*/
-
-
-
-
         $this->order_id = order::create([
             'customer_id' => $this->customer_id,
             'quantity' => $this->quantityOfOrder,
@@ -65,16 +49,11 @@ class OrderForm extends Form
 
 
 
-
     public function createOrderItem()
     {
-
         foreach ($this->items as $item) {
 
-
             $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
-
-//            $this->setOrderItem($item);
 
 
             order_item::create([
@@ -84,12 +63,8 @@ class OrderForm extends Form
                 'quantity' => $item->quantity,
             ]);
 
-
-
         }
     }
-
-
 
 
     public function store()
