@@ -11,6 +11,7 @@
 
 <div>
     @foreach($items as $item)
+
         <div class="bg-white/5 grid grid-cols-9 rounded-md items-center mt-3">
             <button class="col-start-1 m-3 text-gray-200 p-2 bg-red-600 hover:bg-red-900 rounded-md"
                     wire:click="delete({{$loop->index}})" wire:confirm="Are you sure you want to delete this item?">
@@ -40,4 +41,5 @@
             </div>
         </div>
     @endforeach
+
 </div>

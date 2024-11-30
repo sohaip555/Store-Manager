@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Forms;
 
-
+use App\Models\customer;
 use App\Models\order;
 use App\Models\order_item;
 use App\Models\product;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class OrderForm extends Form
@@ -89,14 +90,6 @@ class OrderForm extends Form
 
 
 
-
-
-
-
-
-
-
-
     public function updateOrder()
     {
         if (!isset($this->customer_id))
@@ -134,10 +127,7 @@ class OrderForm extends Form
 
         foreach ($this->items as $item) {
 
-//            $this->updateOrderItem($item);
             $this->createOrderItem($item);
-
-
 
         }
 
@@ -160,8 +150,6 @@ class OrderForm extends Form
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
             ];
-
-//            $this->items->push($item);
         }
 
 
@@ -175,6 +163,7 @@ class OrderForm extends Form
     {
 
         foreach ($items as $item) {
+
 
             if (!isset($item["quantity"]))
             {
@@ -197,36 +186,6 @@ class OrderForm extends Form
 
 
     }
-
-
-//    public function setForUpdate(array $items)
-//    {
-////        dd( $items);
-//
-//        foreach ($items as $item) {
-//
-//            if (!isset($item["quantity"]))
-//            {
-//                dd('you missed the quantity of product');
-//            }
-//
-//            if (!isset($item["product_id"]))
-//            {
-//                dd('you forget to chose the product ');
-//            }
-//
-//            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
-//
-//
-//
-//        }
-//
-//
-//        $this->quantity = collect($items)->count();
-//
-////        dd( $this->items);
-//
-//    }
 
 
 

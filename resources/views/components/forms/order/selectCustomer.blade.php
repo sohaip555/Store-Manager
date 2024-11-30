@@ -13,7 +13,6 @@
                 <option value="{{$customer->id}}" >{{$customer->name}}</option>
             @endforeach
         </select>
-
 {{--        @error('form.customer_id')--}}
 {{--        <h3 class="text-red-600">{{ $message }}</h3>--}}
 {{--        @enderror--}}
