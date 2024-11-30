@@ -31,7 +31,6 @@ class CreateOrder extends Component
     public function mount()
     {
         $this->form = new OrderForm();
-//        $this->form->order = new Order();
         $this->form->customers = customer::all();
         $this->form->products = product::all();
         $this->form->items = collect();
@@ -42,7 +41,6 @@ class CreateOrder extends Component
 
     }
 
-
     public function addItem()
     {
         $this->items[] = [
@@ -52,17 +50,15 @@ class CreateOrder extends Component
 
     }
 
-
     public function delete($index)
     {
         Arr::forget($this->items, $index);
     }
 
-
     public function save()
     {
 
-        $this->form->setForCreate($this->items);
+        $this->form->setForSave($this->items);
 //
 //        dd($this->form->customer_id, $this->form->);
 

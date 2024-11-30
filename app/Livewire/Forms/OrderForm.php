@@ -104,7 +104,6 @@ class OrderForm extends Form
             dd('you need to select a customer');
         }
 
-
         $this->order->update([
             'customer_id' => $this->customer_id,
             'quantity' => $this->quantity,
@@ -113,28 +112,14 @@ class OrderForm extends Form
 
     }
 
-    public function updateOrderItem($item)
+    public function deleteOrderItem()
     {
 
-        // Added validation to ensure data integrity
-        if (!isset($item['product_id']) || !isset($item['quantity']) || $item['quantity'] <= 0) {
-            throw new \Exception("Invalid item data: missing product ID or quantity, or quantity is not positive.");
+        foreach ($this->order->items as $item) {
+
+            $item->delete();
         }
 
-        $product = Product::find($item['product_id']);
-        if (!$product) {
-            throw new \Exception("Product not found: " . $item['product_id']);
-        }
-
-        $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
-
-
-        $item->update([
-            'order_id' => $this->order->id,  //  the order_id is from $this not from $item
-            'product_id' => $item->product_id,
-            'total_price' => $item->total_price,
-            'quantity' => $item->quantity,
-        ]);
 
     }
 
@@ -143,26 +128,21 @@ class OrderForm extends Form
     {
 
         $this->updateOrder();
-//        dd($this);
+
+        $this->deleteOrderItem();
+
 
         foreach ($this->items as $item) {
-//            dd($item);
+
+//            $this->updateOrderItem($item);
+            $this->createOrderItem($item);
 
 
-            if ($item->id != null)
-            {
-                $this->updateOrderItem($item);
-            }else
-            {
-                $this->createOrderItem($item);
-            }
 
         }
 
 
     }
-
-
 
 
     public function setOrder(order $order)
@@ -181,7 +161,7 @@ class OrderForm extends Form
                 'quantity' => $item->quantity,
             ];
 
-            $this->items->push($item);
+//            $this->items->push($item);
         }
 
 
@@ -191,7 +171,7 @@ class OrderForm extends Form
 
 
 
-    public function setForCreate(array $items)
+    public function setForSave(array $items)
     {
 
         foreach ($items as $item) {
@@ -219,30 +199,36 @@ class OrderForm extends Form
     }
 
 
-    public function setForUpdate(array $items)
-    {
+//    public function setForUpdate(array $items)
+//    {
+////        dd( $items);
+//
+//        foreach ($items as $item) {
+//
+//            if (!isset($item["quantity"]))
+//            {
+//                dd('you missed the quantity of product');
+//            }
+//
+//            if (!isset($item["product_id"]))
+//            {
+//                dd('you forget to chose the product ');
+//            }
+//
+//            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
+//
+//
+//
+//        }
+//
+//
+//        $this->quantity = collect($items)->count();
+//
+////        dd( $this->items);
+//
+//    }
 
-        foreach ($items as $item) {
 
-            if (!isset($item["quantity"]))
-            {
-                dd('you missed the quantity of product');
-            }
-
-            if (!isset($item["product_id"]))
-            {
-                dd('you forget to chose the product ');
-            }
-
-            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
-
-        }
-
-
-        $this->quantity = $this->items->count();
-
-
-    }
 
 
 }

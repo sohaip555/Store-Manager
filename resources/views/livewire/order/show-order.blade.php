@@ -13,7 +13,7 @@
 
     <table class="w-full">
         <thead>
-        <tr class="border-b bg-green-800 text-white">
+        <tr class="border-b bg-fuchsia-700 text-white">
             <th class="px-6 py-3 text-left">Actions</th>
             <th class="px-6 py-3 text-right">Total Price</th>
             <th class="px-6 py-3 text-right">Quantity</th>
@@ -23,7 +23,7 @@
         <tbody>
         @foreach($orders as $order)
             <tr wire:key="{{ $order->id }}" class="border-b bg-white/5 text-white hover:bg-gray-600">
-                <td class="px-6 py-3 flex items-center">
+                <td class="px-5 py-3 flex items-center">
                     <button class="text-gray-200 p-2 bg-red-600 hover:bg-red-900 rounded-sm mr-2"
                             wire:click="delete({{ $order->id }})" wire:confirm="Are you sure you want to delete this customer?">
                         Delete

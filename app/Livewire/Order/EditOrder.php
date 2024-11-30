@@ -5,6 +5,7 @@ namespace App\Livewire\Order;
 use App\Livewire\Forms\OrderForm;
 use App\Models\customer;
 use App\Models\order;
+use App\Models\order_item;
 use App\Models\product;
 use Illuminate\Support\Arr;
 use Livewire\Component;
@@ -49,6 +50,8 @@ class EditOrder extends Component
             'product_id' => 1,
         ];
 
+//        dd($this->items);
+
     }
 
     public function delete($index)
@@ -59,9 +62,9 @@ class EditOrder extends Component
     public function save()
     {
 
-        $this->form->setForUpdate($this->items);
+        $this->form->setForSave($this->items);
+//        dd($this->items);
 
-//        dd($this->items, $this->items);
         $this->validate();
         $this->form->update();
 
