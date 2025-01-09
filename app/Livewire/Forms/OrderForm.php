@@ -141,7 +141,6 @@ class OrderForm extends Form
 
         $this->customer_id = $order->customer_id;
         $this->quantity = $order->quantity;
-        $this->total_price = $order->total_price;
         $this->order = $order;
 
         foreach ($order->items as $item) {

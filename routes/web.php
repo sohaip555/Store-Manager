@@ -11,6 +11,8 @@ Route::get('/', function ()
     return view('livewire.home');
 });
 
+//Route::Resource('customer', customer::class);
+
 Route::get('/customer/show', function ()
 {
     return view('customers.show');

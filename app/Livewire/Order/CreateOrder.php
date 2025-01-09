@@ -68,7 +68,6 @@ class CreateOrder extends Component
         $this->redirect('/order/show');
     }
 
-
     public function render()
     {
 
