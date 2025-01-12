@@ -5,12 +5,12 @@
 
     <div class="mb-3 grid grid-cols-7 items-center">
         <label for="mySelect" class="block mb-2 text-white">Select customer :</label> <!-- Added a label for accessibility -->
-        <select id="mySelect" class="mb-2 col-start-2 p-2 w-full border rounded-md bg-gray-700 text-white" wire:model="customer">
+        <select id="mySelect" class="mb-2 col-start-2 p-2 w-full border rounded-md bg-gray-700 text-white" wire:model="customer_id">
             @if(isset($customer))
-                <option value="{{$customer }}" >{{$customers->name}}</option>
+                <option value="{{$customer->id}}" >{{$customers->name}}</option>
             @endif
             @foreach($customers as $customer)
-                <option value="{{$customer}}" >{{$customer->name}}</option>
+                <option value="{{$customer->id}}" >{{$customer->name}}</option>
             @endforeach
         </select>
 {{--        @error('form.customer_id')--}}

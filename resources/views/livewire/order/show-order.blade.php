@@ -4,6 +4,7 @@
 
 
 
+
 <div>
     <div class="mb-3 flex items-center justify-between">
         <a href="/order/create" class="text-blue-600 p-2 hover:text-blue-400 -indigo-900 rounded-sm" wire:navigate>
@@ -32,13 +33,12 @@
                         Edit
                     </a>
                 </td>
-                <td class="px-6 py-3 text-right">${{ $order->total_price }}</td>
+                <td class="px-6 py-3 text-right">${{ $order->price }}</td>
                 <td class="px-6 py-3 text-right">{{ $order->quantity }}</td>
-                <td class="px-6 py-3 text-right">{{ $order->customer->name }}</td>
+                <td class="px-6 py-3 text-right">{{ $order->customer_name }}</td>
             </tr>
         @endforeach
         </tbody>
     </table>
+    {{ $links }}
 </div>
-
-

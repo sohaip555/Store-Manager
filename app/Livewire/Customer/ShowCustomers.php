@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Customer;
 
+use App\Http\Resources\CustomersResource;
 use App\Models\customer;
 use Livewire\Component;
 

@@ -8,63 +8,123 @@ use App\Models\order;
 use App\Models\order_item;
 use App\Models\product;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class CreateOrder extends Component
 {
-
     public OrderForm $form;
-    public array $items = [];
+
+    // Property of <<Order>>
+    public $customer_id;
+    public $quantity = 0;
+    public $price = 0;
+
+
+    // Property of <<Order_Item>>
+    public $product_id;
+    public $quantityOfProduct;
+    public $price_Of_Item;
+
+
+    public $itemsOfOrder;
+    public $customers = [];
+    public $products = [];
 
 
     public function rules(): array
     {
         return [
-            'form.customer_id' => ['required'], // Check if customer ID exists
-            'form.quantity' => ['required'], // Must be a positive integer
-            'form.total_price' => ['required'], // Must be a non-negative number
-//            'form.items.*.product_id' => ['required'], // For each item, product_id must exist
-//            'form.items.*.quantity' => ['required'],    // Each item must have a quantity
+            'quantityOfProduct' => ['required'], // Must be a positive integer
+            'product_id' => ['required'], // For each item, product_id must exist
         ];
     }
 
     public function mount()
     {
-        $this->form = new OrderForm();
-        $this->form->customers = customer::all();
-        $this->form->products = product::all();
-        $this->form->items = collect();
+        $this->customers = customer::all();
+        $this->products = product::all();
+        $this->price = 0;
+        $this->itemsOfOrder = new Collection();
+//        dd($this->customers );
 
 
-//        set defaults value for -->>( form.customer_id )<<---
-        $this->form->customer_id = $this->form->customers[0]->id;
 
+    }
+
+    public function setOrderValue()
+    {
+
+        return [
+            'customer_id' => $this->customer_id,
+            'quantity' => $this->quantity,
+            'price' => $this->price,
+        ];
+    }
+
+    public function setItemValue()
+    {
+        $product = $this->products->firstWhere('id', $this->product_id);
+        $this->price_Of_Item = $product->price * $this->quantityOfProduct;
+
+        return  [
+            'product' => $product,
+            'product_id' => $product->id,
+            'quantity' => $this->quantityOfProduct,
+            'price' => $this->price_Of_Item,
+        ];
+    }
+
+    public function resetItem()
+    {
+        $this->product_id = '';
+        $this->quantityOfProduct = 0;
     }
 
     public function addItem()
     {
-        $this->items[] = [
-            'quantity' => 1,
-            'product_id' => 1,
-        ];
+//        dd($this->product_Selected, $this->quantityOfProduct);
+//        dd($this->itemsOfOrder->first()->product);
 
+        $this->validate();
+        $item = $this->setItemValue();
+        $this->itemsOfOrder->push($item);
+
+        $this->price += $this->price_Of_Item;
+        $this->quantity += $this->quantityOfProduct;
+
+
+        $this->resetItem();
+
+
+    }
+
+    public function update($index)
+    {
+        $item = $this->itemsOfOrder->firstWhere('id', $index);
+
+        $this->price -= $item->price;
+        $this->quantityOfProduct = $item->quantity;
+        $this->product_id = $item->product_id;
+
+        unset($this->itemsOfOrder[$index]);
     }
 
     public function delete($index)
     {
-        Arr::forget($this->items, $index);
+        Arr::forget($this->itemsOfOrder, $index);
     }
 
     public function save()
     {
-
-        $this->form->setForSave($this->items);
-//
+        $this->validate([
+            'customer_id' => ['required'], // Check if customer ID exists
+        ]);
+//        $this->form->setForSave($this->items);
 //        dd($this->form->customer_id, $this->form->);
 
-        $this->validate();
-        $this->form->store();
-
+        $order = $this->setOrderValue();
+        $this->form->store($order, $this->itemsOfOrder);
         $this->redirect('/order/show');
     }
 
@@ -73,4 +133,6 @@ class CreateOrder extends Component
 
         return view('livewire.order.create-order');
     }
+
+
 }

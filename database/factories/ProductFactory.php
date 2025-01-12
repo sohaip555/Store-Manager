@@ -25,7 +25,7 @@ class ProductFactory extends Factory
             'item_code' => $this->faker->numberBetween(1000, 999999),
             'quantity' => $this->faker->numberBetween(2, 50),
             'url' => $this->faker->url(),
-            'status' => $this->faker->randomElements(['delivery', 'arrived']),
+//            'status' => $this->faker->randomElements(['delivery', 'arrived']),
 
         ];
     }

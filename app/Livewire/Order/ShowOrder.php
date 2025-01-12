@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Order;
 
+use App\Models\customer;
 use App\Models\order;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ShowOrder extends Component
 {
-
-    public $orders;
+    use WithPagination;
 
 
     public function delete(order $order)
@@ -19,7 +20,21 @@ class ShowOrder extends Component
 
     public function render()
     {
-        $this->orders = order::with('customer')->get();
-        return view('livewire.order.show-order', [ 'orders' => $this->orders ]);
+
+        $orders = order::query()
+            ->addSelect(['customer_name' => customer::select('name')
+                ->whereColumn('id', 'orders.customer_id')
+            ])
+            ->paginate(10);
+
+//        $this->orders = order::with('customer:id,name')->get();
+
+//        dd($orders->links());
+        return view('livewire.order.show-order', [
+            'orders' => $orders->items(),
+            'links' => $orders->links(),
+        ]);
+//        return view('livewire.order.show-order');
+//        return view('livewire.order.show-order', [ 'orders' => order::with(['customer' => fn ($query) => $query->select('id', 'name')])->paginate(10)]);
     }
 }
