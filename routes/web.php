@@ -11,22 +11,23 @@ Route::get('/', function ()
     return view('livewire.home');
 });
 
-//Route::Resource('customer', customer::class);
+//Route::get('/customer/show', function ()
+//{
+//    return view('customers.show');
+//});
+//
+//Route::get('/customer/create', function ()
+//{
+//    return view('customers.create');
+//});
+//
+//Route::get('/customer/{customer}/edit', function (customer $customer)
+//{
+//    return view('customers.edit', ['customer' => $customer]);
+//});
 
-Route::get('/customer/show', function ()
-{
-    return view('customers.show');
-});
 
-Route::get('/customer/create', function ()
-{
-    return view('customers.create');
-});
-
-Route::get('/customer/{customer}/edit', function (customer $customer)
-{
-    return view('customers.edit', ['customer' => $customer]);
-});
+Route::resource('customer', customer::class);
 
 Route::get('/product/show', function () {
     return view('product.show');

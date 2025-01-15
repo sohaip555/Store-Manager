@@ -25,14 +25,13 @@ class ShowOrder extends Component
             ->addSelect(['customer_name' => customer::select('name')
                 ->whereColumn('id', 'orders.customer_id')
             ])
+//            ->with('product')
             ->paginate(10);
-
-//        $this->orders = order::with('customer:id,name')->get();
 
 //        dd($orders->links());
         return view('livewire.order.show-order', [
-            'orders' => $orders->items(),
-            'links' => $orders->links(),
+            'orders' => $orders,
+//            'links' => $orders->links(),
         ]);
 //        return view('livewire.order.show-order');
 //        return view('livewire.order.show-order', [ 'orders' => order::with(['customer' => fn ($query) => $query->select('id', 'name')])->paginate(10)]);

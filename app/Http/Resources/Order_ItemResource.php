@@ -13,11 +13,11 @@ class Order_ItemResource extends JsonResource
     {
         return [
             'product_id' => $this->product_id,
-            'product' => ProductResource::make($this->whenLoaded('product')),
+//            'product' => ProductResource::make($this->whenLoaded('product')),
             'quantity' => $this->quantity,
             'total_price' => $this->total_price,
             'order_id' => $this->order_id,
-            'order' => OrderResource::make($this->whenLoaded('order')),
+//            'order' => OrderResource::make($this->whenLoaded('order')),
         ];
     }
 }

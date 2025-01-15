@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Http\Resources\Order_ItemResource;
 use App\Models\customer;
 use App\Models\order;
 use App\Models\order_item;
@@ -14,6 +15,7 @@ class OrderForm extends Form
 {
     public $order;
     public $items;
+    public $item;
 
     public function __construct()
     {
@@ -21,8 +23,9 @@ class OrderForm extends Form
     }
 
 
-    public function store($order, $items)
+    public function create($order, $items)
     {
+//        dd($order, $items);
         $this->createOrder($order);
 
 
@@ -35,16 +38,18 @@ class OrderForm extends Form
         }
     }
 
-    public function createOrder($order = null)
+    public function createOrder($order)
     {
 
         $this->order = new order($order);
         $this->order->save();
     }
 
-    public function createOrderItem($items = null)
+    public function createOrderItem($item)
     {
-        order_item::created($items);
+        $this->item =  new order_item($item);
+//        dd($item);
+        $this->item->save($item);
     }
 
     public function setItem ($item)
@@ -54,176 +59,66 @@ class OrderForm extends Form
             'quantity' => $item['quantity'],
             'total_price' => $item['price'],
             'order_id' =>$this->order->id,
-        ];;
+        ];
     }
 
-//    public Collection $items;
-//    public order $order;
-////  for the order property
-//    public $customer_id;
-//    public $quantity;
-//    public $total_price;
-//
-//
-////    select option
-//    public $customers = [];
-//    public $products = [];
-//
+    public function update($orderData, $itemsData)
+    {
+//        dd($orderData);
+        $this->updateOrder($orderData);
+        $this->syncOrderItems($itemsData);
+    }
 
+    public function updateOrder($orderData)
+    {
+        $this->order = order::query()->find($orderData['id']);
+        $this->order->update($orderData);
+    }
 
-//    public function createOrder()
-//    {
-//
-//        if (!isset($this->customer_id))
-//        {
-//            dd('you need to select a customer');
-//        }
-//
-//        $this->order = order::create([
-//            'customer_id' => $this->customer_id,
-//            'quantity' => $this->quantity,
-//            'total_price' => $this->total_price,
-//        ]);
-//
-//    }
-//
-//
-//
-//    public function createOrderItem($item)
-//    {
-//        // Added validation to ensure data integrity
-//        if (!isset($item['product_id']) || !isset($item['quantity']) || $item['quantity'] <= 0) {
-//            throw new \Exception("Invalid item data: missing product ID or quantity, or quantity is not positive.");
-//        }
-//
-//        $product = Product::find($item['product_id']);
-//        if (!$product) {
-//            throw new \Exception("Product not found: " . $item['product_id']);
-//        }
-//
-//        $item->total_price = $item->quantity * $this->products->where('id', $item->product_id)->first()->price;
-//
-//        order_item::create([
-//            'order_id' => $this->order->id,  //  the order_id is from $this not from $item
-//            'product_id' => $item->product_id,
-//            'total_price' => $item->total_price,
-//            'quantity' => $item->quantity,
-//        ]);
-//
-//    }
-//
-//
-//    public function store()
-//    {
-//
-//        $this->createOrder();
-//
-//        foreach ($this->items as $item) {
-//
-//            $this->createOrderItem($item);
-//        }
-//
-//
-//    }
-//
-//
-//
-//    public function updateOrder()
-//    {
-//        if (!isset($this->customer_id))
-//        {
-//            dd('you need to select a customer');
-//        }
-//
-//        $this->order->update([
-//            'customer_id' => $this->customer_id,
-//            'quantity' => $this->quantity,
-//            'total_price' => $this->total_price,
-//        ]);
-//
-//    }
-//
-//    public function deleteOrderItem()
-//    {
-//
-//        foreach ($this->order->items as $item) {
-//
-//            $item->delete();
-//        }
-//
-//
-//    }
-//
-//
-//    public function update()
-//    {
-//
-//        $this->updateOrder();
-//
-//        $this->deleteOrderItem();
-//
-//
-//        foreach ($this->items as $item) {
-//
-//            $this->createOrderItem($item);
-//
-//        }
-//
-//
-//    }
-//
-//
-//    public function setOrder(order $order)
-//    {
-//        $items = [];
-//
-//        $this->customer_id = $order->customer_id;
-//        $this->quantity = $order->quantity;
-//        $this->order = $order;
-//
-//        foreach ($order->items as $item) {
-//
-//            $items[] = [
-//                'product_id' => $item->product_id,
-//                'quantity' => $item->quantity,
-//            ];
-//        }
-//
-//
-//        return $items;
-//
-//    }
-//
-//
-//
-//    public function setForSave(array $items)
-//    {
-//
-//        foreach ($items as $item) {
-//
-//
-//            if (!isset($item["quantity"]))
-//            {
-//                dd('you missed the quantity of product');
-//            }
-//
-//            if (!isset($item["product_id"]))
-//            {
-//                dd('you forget to chose the product ');
-//            }
-//
-//            $this->total_price +=  $item['quantity'] * $this->products->where('id', $item["product_id"])->first()->price;
-//
-//
-//            $this->items->push(new order_item($item));
-//        }
-//
-//
-//        $this->quantity = $this->items->count();
-//
-//
-//    }
-//
+    public function syncOrderItems($itemsData)
+    {
+        $existingItemIds = $this->order->items->pluck('id')->toArray();
+        $newItemIds = collect($itemsData)->where('id','!=',null)->pluck('id')->toArray();
+
+        $itemsToDelete = array_diff($existingItemIds, $newItemIds);
+//        dd($existingItemIds, $newItemIds, $itemsData, $itemsToDelete);
+
+        order_item::destroy($itemsToDelete);
+
+        foreach ($itemsData as $item) {
+            $itemData = $this->setItem($item);
+            if (isset($item['id'])) {
+                order_item::query()->find($item['id'])->update($itemData);
+            }else{
+                $this->createOrderItem($itemData);
+            }
+
+        }
+
+    }
+
+    public function get_otder_item_as_array(order $order)
+    {
+        $items = [];
+
+//        dd($order->items()->with('product')->get()[0]->product);
+        foreach ($order->items()->with('product')->get() as $item) {
+            $items[] = [
+                'id' => $item['id'],
+                'product_id' => $item['product_id'],
+                'product' => $item->product,
+                'quantity' => $item['quantity'],
+                'price' => $item['total_price'],
+                'order_id' => $order->id,
+            ];
+        }
+
+//        dd($items);
+
+        return $items;
+
+    }
+
 
 
 

@@ -14,6 +14,7 @@ use Livewire\Component;
 class CreateOrder extends Component
 {
     public OrderForm $form;
+    public $Update_Or_Add = 'Add';
 
     // Property of <<Order>>
     public $customer_id;
@@ -42,10 +43,10 @@ class CreateOrder extends Component
 
     public function mount()
     {
-        $this->customers = customer::all();
+        $this->customers = customer::query()->select('id', 'name')->get();
         $this->products = product::all();
         $this->price = 0;
-        $this->itemsOfOrder = new Collection();
+        $this->itemsOfOrder = [];
 //        dd($this->customers );
 
 
@@ -88,43 +89,53 @@ class CreateOrder extends Component
 
         $this->validate();
         $item = $this->setItemValue();
-        $this->itemsOfOrder->push($item);
+        $this->itemsOfOrder[] = $item;
 
         $this->price += $this->price_Of_Item;
         $this->quantity += $this->quantityOfProduct;
 
-
         $this->resetItem();
 
+        $this->Update_Or_Add = 'Add';
 
     }
 
-    public function update($index)
+    public function edit($index)
     {
-        $item = $this->itemsOfOrder->firstWhere('id', $index);
+        $item = $this->itemsOfOrder[$index];
 
-        $this->price -= $item->price;
-        $this->quantityOfProduct = $item->quantity;
-        $this->product_id = $item->product_id;
+//        dd( $item);
+        $this->price -= $item['price'];
+        $this->quantity -= $item['quantity'];
+        $this->quantityOfProduct = $item['quantity'];
+        $this->product_id = $item['product_id'];
 
-        unset($this->itemsOfOrder[$index]);
+        Arr::forget($this->itemsOfOrder, $index);
+        $this->Update_Or_Add = 'Update';
+
     }
 
     public function delete($index)
     {
+        $item = $this->itemsOfOrder[$index];
+
+//        dd( $item);
+        $this->price -= $item['price'];
+        $this->quantity -= $item['quantity'];
+
         Arr::forget($this->itemsOfOrder, $index);
     }
 
     public function save()
     {
+//        dd();
         $this->validate([
             'customer_id' => ['required'], // Check if customer ID exists
         ]);
-//        $this->form->setForSave($this->items);
 //        dd($this->form->customer_id, $this->form->);
 
         $order = $this->setOrderValue();
-        $this->form->store($order, $this->itemsOfOrder);
+        $this->form->create($order, $this->itemsOfOrder);
         $this->redirect('/order/show');
     }
 
