@@ -25,14 +25,13 @@
 
             <div class="space-x-6 font-bold">
                 <a class="text-lg" href="/customer/show">Customers</a>
-                <a class="text-lg" href="/product/add">Product</a>
-                {{--                <a class="text-lg" href="/product/show">Product</a>--}}
+                <a class="text-lg" href="/product/create">Product</a>
                 <a class="text-lg" href="/orders">Orders</a>
 
             </div>
 
             <div>
-                <a class="text-lg" href="">Post a Job</a>
+                <a class="text-lg" href="/register">Register</a>
             </div>
         </nav>
 

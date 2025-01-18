@@ -30,7 +30,10 @@
             </div>
 
             <div>
-                <a class="text-lg" href="">Post a Job</a>
+                <a class="text-lg" href="/logout">Logout</a>
+{{--                <a class="text-lg" href="/register">Register</a>--}}
+
+{{--                <a class="text-lg" href="">Post a Job</a>--}}
             </div>
         </nav>
 
